@@ -1,0 +1,51 @@
+#limpieza
+
+l_wallets = (wallets ['address'].tolist())
+l_wallets_unique = [x.rstrip() for x in l_wallets]
+l_wallets_unique = list( dict.fromkeys(l_wallets) )
+
+l_wallets_unique.remove("###@gmail.com")
+l_wallets_unique.remove("#####")
+l_wallets_unique.remove("####")
+l_wallets_unique.remove("####")
+
+
+prefixes = ('bc', 'BTC:')
+for word in l_wallets_unique[:]:
+    if word.startswith(prefixes):
+        l_wallets_unique.remove(word)
+
+for word in l_wallets_unique[:]:
+    if len (word) != 42:
+        l_wallets_unique.remove(word)
+        
+        
+logs = []
+start = datetime.strptime('2022,03,07', '%Y,%m,%d')
+end = datetime.strptime('2022,03,19', '%Y,%m,%d')
+
+
+for address in l_wallets_unique: 
+  url='https://api.covalenthq.com'#### :D  
+  r = requests.get(url)
+  gen_var = 0
+  for x in range (0, len (r.json()['data']['items'])):
+    try: 
+      block_signed = (r.json()['data']['items'][x]['block_signed_at'])
+      block_signed_date = (block_signed[0:10])
+      block_signed_date = datetime.strptime(block_signed_date, '%Y-%m-%d')
+      if start<= block_signed_date <= end:
+        #logs.append (len (r.json()['data']['items']))
+        gen_var = gen_var + 1 
+      else:
+        gen_var = gen_var +0
+    except: 
+      print (address + 'is not a valid address')
+  logs.append (gen_var)     
+  
+def Average(lst):
+  return sum(lst) / len(lst)
+
+
+mean_logs= Average(logs)
+mean_logs
